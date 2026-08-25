@@ -18,7 +18,9 @@ export default function Insights({ apiBase = '', token='' }){
   if (error) return <div style={{color:'red'}}>Error: {error}</div>
 
   return (
-    <table style={{borderCollapse:'collapse',width:'100%'}}>
+    <div>
+      <div style={{marginBottom:8}}>Departments: {rows.length.toLocaleString()}</div>
+      <table style={{borderCollapse:'collapse',width:'100%'}}>
       <thead>
         <tr>
           <th style={{textAlign:'left',borderBottom:'1px solid #ddd',padding:8}}>Department</th>
@@ -30,11 +32,12 @@ export default function Insights({ apiBase = '', token='' }){
         {rows.map(r => (
           <tr key={r.department}>
             <td style={{padding:8,borderBottom:'1px solid #f0f0f0'}}>{r.department}</td>
-            <td style={{padding:8,textAlign:'right',borderBottom:'1px solid #f0f0f0'}}>{r.count}</td>
-            <td style={{padding:8,textAlign:'right',borderBottom:'1px solid #f0f0f0'}}>{Number(r.avgAnnual).toLocaleString(undefined,{maximumFractionDigits:2})}</td>
+            <td style={{padding:8,textAlign:'right',borderBottom:'1px solid #f0f0f0'}}>{Number(r.count).toLocaleString()}</td>
+            <td style={{padding:8,textAlign:'right',borderBottom:'1px solid #f0f0f0'}}>{Number(r.avgAnnual).toLocaleString(undefined,{style:'currency',currency:'USD',maximumFractionDigits:2})}</td>
           </tr>
         ))}
       </tbody>
     </table>
+    </div>
   )
 }
