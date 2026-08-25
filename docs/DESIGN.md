@@ -156,7 +156,7 @@ Order of work: local Docker Compose (MySQL + API + UI) first; public URL (e.g. R
 | Phase | Deliverable | Typical commit |
 |---|---|---|
 | 1 | This requirements + design + AI notes | docs only |
-| 2 | MySQL, Prisma schema, docker-compose | schema |
+| 2 | MySQL, Prisma schema, Express health | schema |
 | 3 | Seed 10,000 | seed |
 | 4 | Employee API + tests | API |
 | 5 | Compensation + tests | domain |

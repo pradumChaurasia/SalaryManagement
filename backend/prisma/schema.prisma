@@ -1,0 +1,65 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum EmploymentStatus {
+  active
+  inactive
+}
+
+model Employee {
+  id           String           @id @default(cuid())
+  employeeCode String           @unique @map("employee_code") @db.VarChar(32)
+  fullName     String           @map("full_name") @db.VarChar(200)
+  email        String           @db.VarChar(255)
+  department   String           @db.VarChar(100)
+  jobTitle     String           @map("job_title") @db.VarChar(150)
+  country      String           @db.Char(2) // ISO 3166-1 alpha-2
+  status       EmploymentStatus @default(active)
+  hireDate     DateTime         @map("hire_date") @db.Date
+  createdAt    DateTime         @default(now()) @map("created_at")
+  updatedAt    DateTime         @updatedAt @map("updated_at")
+
+  compensationRecords CompensationRecord[]
+
+  @@index([country])
+  @@index([department])
+  @@index([status])
+  @@index([fullName])
+  @@map("employees")
+}
+
+model CompensationRecord {
+  id          String    @id @default(cuid())
+  employeeId  String    @map("employee_id")
+  annualBase  Decimal   @map("annual_base") @db.Decimal(14, 2)
+  currency    String    @db.Char(3) // ISO 4217
+  effectiveFrom DateTime @map("effective_from") @db.Date
+  // NULL = current salary. App enforces at most one current row per employee.
+  effectiveTo DateTime? @map("effective_to") @db.Date
+  notes       String?   @db.VarChar(500)
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId, effectiveTo])
+  @@map("compensation_records")
+}
+
+model FxRate {
+  id           String   @id @default(cuid())
+  fromCurrency String   @map("from_currency") @db.Char(3)
+  toCurrency   String   @map("to_currency") @db.Char(3)
+  rate         Decimal  @db.Decimal(18, 8)
+  asOfDate     DateTime @map("as_of_date") @db.Date
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@unique([fromCurrency, toCurrency, asOfDate])
+  @@map("fx_rates")
+}
