@@ -1,5 +1,7 @@
 const express = require('express');
 const employeesRouter = require('./routes/employees');
+const compensationsRouter = require('./routes/compensations');
+const insightsRouter = require('./routes/insights');
 const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
@@ -8,6 +10,8 @@ const app = express();
 app.use(express.json());
 
 app.use('/employees', employeesRouter(prisma));
+app.use('/compensations', compensationsRouter(prisma));
+app.use('/insights', insightsRouter(prisma));
 
 app.get('/health', async (_req, res) => {
   try {
