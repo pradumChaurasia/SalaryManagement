@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const employeesRouter = require('./routes/employees');
 const compensationsRouter = require('./routes/compensations');
 const insightsRouter = require('./routes/insights');
@@ -8,6 +9,9 @@ const prisma = new PrismaClient();
 const app = express();
 
 app.use(express.json());
+
+// Enable CORS for all origins
+app.use(cors());
 
 app.use('/employees', employeesRouter(prisma));
 app.use('/compensations', compensationsRouter(prisma));
