@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
 
-export default function Insights({ apiBase = '' }){
+export default function Insights({ apiBase = '', token='' }){
   const [rows, setRows] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
   useEffect(()=>{
     setLoading(true)
-    fetch(`${apiBase}/insights/compensation/by-department`)
+    const headers = token ? { Authorization: `Bearer ${token}` } : undefined
+    fetch(`${apiBase}/insights/compensation/by-department`, { headers })
       .then(r=> r.json())
       .then(d=> { setRows(d || []); setLoading(false) })
       .catch(e=> { setError(e.message || String(e)); setLoading(false) })
