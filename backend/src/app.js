@@ -3,6 +3,8 @@ const cors = require('cors');
 const employeesRouter = require('./routes/employees');
 const compensationsRouter = require('./routes/compensations');
 const insightsRouter = require('./routes/insights');
+const authRouter = require('./routes/auth');
+const { requireAuth } = require('./middleware/auth');
 const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
@@ -12,6 +14,11 @@ app.use(express.json());
 
 // Enable CORS for all origins
 app.use(cors());
+
+app.use('/auth', authRouter);
+
+// Apply auth middleware globally (it will be a no-op unless AUTH_ENABLED=true)
+app.use(requireAuth);
 
 app.use('/employees', employeesRouter(prisma));
 app.use('/compensations', compensationsRouter(prisma));
