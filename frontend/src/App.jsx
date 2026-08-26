@@ -18,14 +18,15 @@ export default function App(){
 
   useEffect(()=>{
     if (view !== 'employees') return
-    apiFetch(`${API_BASE}/employees?page=${page}&limit=${limit}`, { token })
+    const q = encodeURIComponent(search || '')
+    apiFetch(`${API_BASE}/employees?page=${page}&limit=${limit}&q=${q}`, { token })
       .then(r=> r.body)
       .then(d=> {
         setEmps(d ? d.items || [] : [])
         setTotal(d ? d.total || 0 : 0)
       })
       .catch(()=>{})
-  },[view, token, page, limit])
+  },[view, token, page, limit, search])
 
   function handleLogin(t){
     setToken(t)
@@ -61,7 +62,7 @@ export default function App(){
           <div>
             <h2>Employees</h2>
             <div style={{display:'flex',gap:8,alignItems:'center',marginBottom:12}}>
-              <input placeholder="Search name or job" value={search} onChange={e=>setSearch(e.target.value)} />
+              <input placeholder="Search name or job" value={search} onChange={e=>{ setSearch(e.target.value); setPage(1); }} />
               <div style={{marginLeft:'auto'}}>
                 <button onClick={()=> setPage(Math.max(1,page-1))} disabled={page<=1}>Prev</button>
                 <span style={{margin:'0 8px'}}>Page {page} — {Math.min(total, page*limit)} / {total.toLocaleString()}</span>
@@ -69,8 +70,7 @@ export default function App(){
               </div>
             </div>
             <ul>
-              {emps.filter(e => !search || (e.fullName || '').toLowerCase().includes(search.toLowerCase()) || (e.jobTitle||'').toLowerCase().includes(search.toLowerCase()))
-                .map(e=> (
+              {emps.map(e=> (
                 <li key={e.id} style={{cursor:'pointer'}} onClick={()=>setSelected(e)}>{e.fullName} — {e.jobTitle}</li>
               ))}
             </ul>

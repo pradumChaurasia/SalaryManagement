@@ -8,10 +8,19 @@ function router(prisma) {
     const page = Math.max(1, Number(req.query.page) || 1);
     const limit = Math.min(100, Math.max(1, Number(req.query.limit) || 20));
     const skip = (page - 1) * limit;
+    const q = (req.query.q || '').trim();
+
+    const where = {};
+    if (q) {
+      where.OR = [
+        { fullName: { contains: q, mode: 'insensitive' } },
+        { jobTitle: { contains: q, mode: 'insensitive' } },
+      ];
+    }
 
     const [items, total] = await Promise.all([
-      prisma.employee.findMany({ skip, take: limit, orderBy: { fullName: 'asc' } }),
-      prisma.employee.count(),
+      prisma.employee.findMany({ where, skip, take: limit, orderBy: { fullName: 'asc' } }),
+      prisma.employee.count({ where }),
     ]);
 
     res.json({ page, limit, total, items });
