@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import Insights from './Insights'
 import EmployeeDetail from './EmployeeDetail'
 import Login from './Login'
+import { useTheme } from './ThemeContext'
 import { apiFetch } from './lib/api'
 
 const sortOptions = [
@@ -22,14 +23,9 @@ export default function App() {
   const [search, setSearch] = useState('')
   const [sortBy, setSortBy] = useState('fullName')
   const [sortDir, setSortDir] = useState('asc')
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark')
+  const { theme, toggleTheme } = useTheme()
 
   const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme
-    localStorage.setItem('theme', theme)
-  }, [theme])
 
   useEffect(() => {
     if (!token || view !== 'employees') return
@@ -149,7 +145,7 @@ export default function App() {
             <div className="user-badge">
               <span className="user-dot" />
               <span>HR Team</span>
-              <button type="button" className="theme-toggle" onClick={() => setTheme((current) => current === 'dark' ? 'light' : 'dark')}>
+              <button type="button" className="theme-toggle" onClick={toggleTheme}>
                 {theme === 'dark' ? '☀️ Light' : '🌙 Dark'}
               </button>
               <button type="button" className="logout-btn" onClick={logout}>Logout</button>
