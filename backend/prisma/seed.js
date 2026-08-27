@@ -22,46 +22,42 @@ async function main() {
   await prisma.compensationRecord.deleteMany();
   await prisma.employee.deleteMany();
 
-  const BATCH = 200;
+  const BATCH = Number(process.env.SEED_BATCH) || 25;
   for (let start = 1; start <= COUNT; start += BATCH) {
     const end = Math.min(start + BATCH - 1, COUNT);
-    const batchPromises = [];
 
     for (let i = start; i <= end; i++) {
-      batchPromises.push((async () => {
-        const employeeCode = `E${String(i).padStart(6, '0')}`;
-        const fullName = `Employee ${i}`;
-        const email = `employee${i}@example.com`;
-        const department = randFrom(DEPARTMENTS);
-        const jobTitle = randFrom(TITLES);
-        const country = randFrom(COUNTRIES);
-        const hireDate = randDate(new Date(2015, 0, 1), new Date());
+      const employeeCode = `E${String(i).padStart(6, '0')}`;
+      const fullName = `Employee ${i}`;
+      const email = `employee${i}@example.com`;
+      const department = randFrom(DEPARTMENTS);
+      const jobTitle = randFrom(TITLES);
+      const country = randFrom(COUNTRIES);
+      const hireDate = randDate(new Date(2015, 0, 1), new Date());
 
-        const emp = await prisma.employee.create({
-          data: {
-            employeeCode,
-            fullName,
-            email,
-            department,
-            jobTitle,
-            country,
-            hireDate,
-          },
-        });
+      const emp = await prisma.employee.create({
+        data: {
+          employeeCode,
+          fullName,
+          email,
+          department,
+          jobTitle,
+          country,
+          hireDate,
+        },
+      });
 
-        const annual = (30000 + Math.random() * 120000).toFixed(2);
-        await prisma.compensationRecord.create({
-          data: {
-            employeeId: emp.id,
-            annualBase: annual,
-            currency: 'USD',
-            effectiveFrom: randDate(new Date(2018, 0, 1), new Date()),
-          },
-        });
-      })());
+      const annual = (30000 + Math.random() * 120000).toFixed(2);
+      await prisma.compensationRecord.create({
+        data: {
+          employeeId: emp.id,
+          annualBase: annual,
+          currency: 'USD',
+          effectiveFrom: randDate(new Date(2018, 0, 1), new Date()),
+        },
+      });
     }
 
-    await Promise.all(batchPromises);
     console.log(`Created employees ${start}..${end}`);
   }
 
