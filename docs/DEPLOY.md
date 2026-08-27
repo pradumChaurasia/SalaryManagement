@@ -28,7 +28,7 @@ Backend:
 - `AUTH_SECRET=<random secret>`
 
 Frontend:
-- `VITE_API_BASE_URL=https://<your-api-url>`
+- `VITE_API_BASE_URL=https://<api-url>`
 
 ## Notes
 
