@@ -21,6 +21,7 @@ export default function App() {
   const [limit, setLimit] = useState(12)
   const [total, setTotal] = useState(0)
   const [search, setSearch] = useState('')
+  const [loading, setLoading] = useState(false)
   const [sortBy, setSortBy] = useState('fullName')
   const [sortDir, setSortDir] = useState('asc')
   const { theme, toggleTheme } = useTheme()
@@ -32,6 +33,7 @@ export default function App() {
 
     const controller = new AbortController()
     const q = encodeURIComponent(search.trim())
+    setLoading(true)
     const timer = setTimeout(() => apiFetch(`${API_BASE}/employees?page=${page}&limit=${limit}&q=${q}`, {
       token,
       signal: controller.signal,
@@ -40,11 +42,13 @@ export default function App() {
       .then((d) => {
         setEmps(d ? d.items || [] : [])
         setTotal(d ? d.total || 0 : 0)
+        setLoading(false)
       })
       .catch((error) => {
         if (error.name === 'AbortError') return
         setEmps([])
         setTotal(0)
+        setLoading(false)
       }), 250)
 
     return () => {
@@ -227,7 +231,12 @@ export default function App() {
               </div>
 
               <div className="employee-list">
-                {filteredEmployees.length ? (
+                {loading ? (
+                  <div className="empty-state loading-state" role="status" aria-live="polite">
+                    <span className="loading-spinner" aria-hidden="true" />
+                    Loading employees...
+                  </div>
+                ) : filteredEmployees.length ? (
                   filteredEmployees.map((employee) => (
                     <button
                       key={employee.id}
