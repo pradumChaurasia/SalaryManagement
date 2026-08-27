@@ -751,6 +751,8 @@ button {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  height: 100%;
+  min-height: 0;
 }
 
 .compact {
@@ -762,6 +764,10 @@ button {
   flex-direction: column;
   gap: 18px;
   margin-top: 10px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 8px;
 }
 
 .insight-row {
