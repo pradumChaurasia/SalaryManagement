@@ -19,7 +19,21 @@ function router(prisma) {
     }
 
     const [items, total] = await Promise.all([
-      prisma.employee.findMany({ where, skip, take: limit, orderBy: { fullName: 'asc' } }),
+      prisma.employee.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { fullName: 'asc' },
+        select: {
+          id: true,
+          employeeCode: true,
+          fullName: true,
+          department: true,
+          jobTitle: true,
+          country: true,
+          status: true,
+        },
+      }),
       prisma.employee.count({ where }),
     ]);
 

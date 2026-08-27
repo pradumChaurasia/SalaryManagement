@@ -30,17 +30,27 @@ export default function App() {
   useEffect(() => {
     if (!token || view !== 'employees') return
 
-    const q = encodeURIComponent(search || '')
-    apiFetch(`${API_BASE}/employees?page=${page}&limit=${limit}&q=${q}`, { token })
+    const controller = new AbortController()
+    const q = encodeURIComponent(search.trim())
+    const timer = setTimeout(() => apiFetch(`${API_BASE}/employees?page=${page}&limit=${limit}&q=${q}`, {
+      token,
+      signal: controller.signal,
+    })
       .then((r) => r.body)
       .then((d) => {
         setEmps(d ? d.items || [] : [])
         setTotal(d ? d.total || 0 : 0)
       })
-      .catch(() => {
+      .catch((error) => {
+        if (error.name === 'AbortError') return
         setEmps([])
         setTotal(0)
-      })
+      }), 250)
+
+    return () => {
+      clearTimeout(timer)
+      controller.abort()
+    }
   }, [view, token, page, limit, search, API_BASE])
 
   function handleLogin(t) {
