@@ -88,8 +88,9 @@ export default function EmployeeDetail({ employee, apiBase = '', token = '', onC
   if (!localEmployee) return null
 
   return (
-    <div className="detail-overlay">
-      <div className="detail-card">
+    <>
+      <div className="detail-drawer-backdrop" onClick={onClose} />
+      <div className="detail-drawer" role="dialog" aria-modal="true">
         <div className="detail-header">
           <div>
             <p className="eyebrow">PROFILE</p>
@@ -221,6 +222,6 @@ export default function EmployeeDetail({ employee, apiBase = '', token = '', onC
           </div>
         </div>
       )}
-    </div>
+    </>
   )
 }
