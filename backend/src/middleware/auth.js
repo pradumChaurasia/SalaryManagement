@@ -5,7 +5,7 @@ const AUTH_SECRET = process.env.AUTH_SECRET || 'dev-secret';
 
 function requireAuth(req, res, next) {
   if (!AUTH_ENABLED) return next();
-  // Only protect non-GET methods
+  if (req.method === 'OPTIONS') return res.sendStatus(204);
   if (req.method === 'GET') return next();
 
   const h = req.headers.authorization || '';

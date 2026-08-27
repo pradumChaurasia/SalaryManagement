@@ -14,6 +14,32 @@
   --muted: #94a3b8;
   --danger: #f87171;
   --shadow: 0 20px 45px rgba(15, 23, 42, 0.35);
+  --surface: rgba(15, 23, 42, 0.7);
+  --surface-elevated: rgba(13, 29, 45, 0.92);
+  --surface-soft: rgba(19, 40, 60, 0.7);
+  --input: rgba(15, 23, 42, 0.7);
+}
+
+:root[data-theme='light'] {
+  --bg: #eef6ff;
+  --bg-soft: #f8fbff;
+  --panel: rgba(255, 255, 255, 0.9);
+  --panel-strong: #f4f8ff;
+  --panel-alt: #edf4ff;
+  --border: rgba(15, 23, 42, 0.08);
+  --primary: #2563eb;
+  --primary-strong: #1d4ed8;
+  --success: #16a34a;
+  --warning: #d97706;
+  --purple: #7c3aed;
+  --text: #0f172a;
+  --muted: #475569;
+  --danger: #dc2626;
+  --shadow: 0 18px 35px rgba(30, 41, 59, 0.12);
+  --surface: rgba(255, 255, 255, 0.92);
+  --surface-elevated: rgba(255, 255, 255, 0.96);
+  --surface-soft: rgba(239, 246, 255, 0.9);
+  --input: rgba(255, 255, 255, 0.95);
 }
 
 * {
@@ -25,7 +51,7 @@ html, body, #root {
   min-height: 100%;
   min-height: 100vh;
   font-family: Inter, 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #020817 0%, #0b1220 30%, #111827 100%);
+  background: linear-gradient(135deg, var(--bg) 0%, var(--bg-soft) 30%, #111827 100%);
   color: var(--text);
 }
 
@@ -279,6 +305,40 @@ button {
   margin-bottom: 18px;
 }
 
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.sort-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.sort-control select,
+.sort-btn,
+.theme-toggle {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--input);
+  color: var(--text);
+  padding: 8px 10px;
+}
+
+.sort-btn,
+.theme-toggle {
+  font-size: 0.8rem;
+}
+
 .pill {
   display: inline-flex;
   align-items: center;
@@ -380,12 +440,23 @@ button {
   background: rgba(15, 23, 42, 0.5);
 }
 
-.detail-card {
+.detail-overlay {
+  position: relative;
   margin-top: 24px;
+}
+
+.detail-card {
   border: 1px solid var(--border);
   border-radius: 20px;
-  background: rgba(13, 29, 45, 0.9);
+  background: var(--surface-elevated);
   padding: 18px;
+  box-shadow: var(--shadow);
+}
+
+.detail-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .detail-header {
@@ -514,7 +585,7 @@ button {
   background:
     radial-gradient(circle at top left, rgba(56, 189, 248, 0.2), transparent 32%),
     radial-gradient(circle at bottom right, rgba(167, 139, 250, 0.2), transparent 30%),
-    linear-gradient(135deg, #020817 0%, #0f172a 50%, #111827 100%);
+    linear-gradient(135deg, var(--bg), var(--bg-soft) 40%, #111827 100%);
 }
 
 .login-card {
@@ -586,6 +657,65 @@ button {
   gap: 18px;
 }
 
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 8, 23, 0.62);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  z-index: 30;
+}
+
+.modal-card {
+  width: min(560px, 100%);
+  border-radius: 22px;
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.modal-header h3 {
+  margin: 0;
+}
+
+.edit-form {
+  display: grid;
+  gap: 14px;
+}
+
+.edit-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--muted);
+}
+
+.edit-form input,
+.edit-form select {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--input);
+  color: var(--text);
+  padding: 11px 12px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+
 .form-header h2 {
   margin: 6px 0 0;
   font-size: 2rem;
@@ -639,6 +769,18 @@ button {
   height: 100%;
   border-radius: inherit;
   background: linear-gradient(90deg, var(--primary), var(--purple));
+  transition: width 0.6s ease;
+  animation: growBar 0.8s ease;
+}
+
+@keyframes growBar {
+  from {
+    width: 0%;
+    opacity: 0.4;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .insight-row-foot {

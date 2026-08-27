@@ -1,8 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import Insights from './Insights'
 import EmployeeDetail from './EmployeeDetail'
 import Login from './Login'
 import { apiFetch } from './lib/api'
+
+const sortOptions = [
+  { label: 'Name', value: 'fullName' },
+  { label: 'Department', value: 'department' },
+  { label: 'Job title', value: 'jobTitle' },
+  { label: 'Country', value: 'country' },
+]
 
 export default function App() {
   const [view, setView] = useState('employees')
@@ -13,8 +20,16 @@ export default function App() {
   const [limit, setLimit] = useState(12)
   const [total, setTotal] = useState(0)
   const [search, setSearch] = useState('')
+  const [sortBy, setSortBy] = useState('fullName')
+  const [sortDir, setSortDir] = useState('asc')
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark')
 
   const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme
+    localStorage.setItem('theme', theme)
+  }, [theme])
 
   useEffect(() => {
     if (!token || view !== 'employees') return
@@ -44,11 +59,42 @@ export default function App() {
     setView('employees')
   }
 
+  const sortedEmployees = useMemo(() => {
+    const next = [...emps]
+    next.sort((a, b) => {
+      const left = (a[sortBy] || '').toString().toLowerCase()
+      const right = (b[sortBy] || '').toString().toLowerCase()
+      if (left < right) return sortDir === 'asc' ? -1 : 1
+      if (left > right) return sortDir === 'asc' ? 1 : -1
+      return 0
+    })
+    return next
+  }, [emps, sortBy, sortDir])
+
+  const filteredEmployees = useMemo(() => {
+    const value = search.trim().toLowerCase()
+    if (!value) return sortedEmployees
+
+    return sortedEmployees.filter((employee) => {
+      const haystack = [
+        employee.fullName,
+        employee.jobTitle,
+        employee.department,
+        employee.country,
+        employee.employeeCode,
+      ]
+        .join(' ')
+        .toLowerCase()
+
+      return haystack.includes(value)
+    })
+  }, [sortedEmployees, search])
+
   const totalPages = Math.max(1, Math.ceil(total / limit))
 
   const stats = [
     { label: 'Total employees', value: total ? total.toLocaleString() : '—', tone: 'primary' },
-    { label: 'Visible rows', value: emps.length.toLocaleString(), tone: 'green' },
+    { label: 'Visible rows', value: filteredEmployees.length.toLocaleString(), tone: 'green' },
     { label: 'Current page', value: `${page}/${totalPages}`, tone: 'amber' },
     { label: 'Search', value: search ? 'Filtered' : 'All', tone: 'purple' },
   ]
@@ -103,6 +149,9 @@ export default function App() {
             <div className="user-badge">
               <span className="user-dot" />
               <span>HR Team</span>
+              <button type="button" className="theme-toggle" onClick={() => setTheme((current) => current === 'dark' ? 'light' : 'dark')}>
+                {theme === 'dark' ? '☀️ Light' : '🌙 Dark'}
+              </button>
               <button type="button" className="logout-btn" onClick={logout}>Logout</button>
             </div>
           </header>
@@ -139,7 +188,25 @@ export default function App() {
               </div>
 
               <div className="toolbar">
-                <span className="pill">{total.toLocaleString()} total</span>
+                <div className="toolbar-left">
+                  <span className="pill">{total.toLocaleString()} total</span>
+                  <label className="sort-control">
+                    <span>Sort by</span>
+                    <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                      {sortOptions.map((option) => (
+                        <option key={option.value} value={option.value}>{option.label}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <button
+                    type="button"
+                    className="sort-btn"
+                    onClick={() => setSortDir((current) => (current === 'asc' ? 'desc' : 'asc'))}
+                  >
+                    {sortDir === 'asc' ? 'Asc ↑' : 'Desc ↓'}
+                  </button>
+                </div>
+
                 <div className="pager">
                   <button type="button" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1}>
                     Previous
@@ -154,8 +221,8 @@ export default function App() {
               </div>
 
               <div className="employee-list">
-                {emps.length ? (
-                  emps.map((employee) => (
+                {filteredEmployees.length ? (
+                  filteredEmployees.map((employee) => (
                     <button
                       key={employee.id}
                       type="button"
