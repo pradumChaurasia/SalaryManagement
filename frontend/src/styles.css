@@ -930,10 +930,46 @@ button {
 @media (max-width: 720px) {
   .app-shell {
     padding: 16px;
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .dashboard-shell {
+    height: auto;
+    min-height: calc(100vh - 32px);
+    overflow: visible;
+    border-radius: 20px;
+  }
+
+  .sidebar {
+    padding: 18px 16px;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .brand-wrap {
+    padding: 4px 2px 14px;
+  }
+
+  .nav {
+    flex-direction: row;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .nav-btn {
+    flex: 1;
+    text-align: center;
+  }
+
+  .sidebar-card {
+    display: none;
   }
 
   .main-panel {
     padding: 18px 16px 20px;
+    overflow: visible;
+    height: auto;
   }
 
   .topbar,
@@ -945,11 +981,69 @@ button {
   }
 
   .stats-grid {
+
+  .topbar {
+    gap: 14px;
+  }
+
+  .topbar h1 {
+    font-size: 2rem;
+  }
+
+  .user-badge {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .theme-toggle,
+  .logout-btn {
+    flex: 1;
+  }
     grid-template-columns: 1fr;
   }
 
   .search-box {
     min-width: 100%;
+    width: 100%;
+  }
+
+  .panel {
+    height: auto;
+    min-height: 420px;
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .toolbar-left,
+  .pager {
+    width: 100%;
+  }
+
+  .pager {
+    justify-content: space-between;
+  }
+
+  .employee-list {
+    grid-template-columns: 1fr;
+    overflow: visible;
+    padding-right: 0;
+  }
+
+  .employee-item {
+    padding: 12px;
+  }
+
+  .employee-meta small {
+    white-space: normal;
+  }
+
+  .detail-drawer {
+    top: 12px;
+    right: 12px;
+    width: calc(100vw - 24px);
+    height: calc(100vh - 24px);
+    max-height: calc(100vh - 24px);
+    border-radius: 18px;
   }
 
   .login-card {
@@ -959,5 +1053,72 @@ button {
   .login-visual,
   .login-form {
     padding: 26px 22px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-shell {
+    padding: 8px;
+  }
+
+  .dashboard-shell {
+    min-height: calc(100vh - 16px);
+    border-radius: 16px;
+  }
+
+  .sidebar {
+    border-radius: 16px 16px 0 0;
+  }
+
+  .main-panel {
+    padding: 16px 12px;
+  }
+
+  .stats-grid {
+    gap: 10px;
+  }
+
+  .stat-card {
+    padding: 14px 16px;
+  }
+
+  .panel-header h3 {
+    font-size: 1.35rem;
+  }
+
+  .toolbar-left {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .sort-control,
+  .sort-btn {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .sort-control select {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .employee-item {
+    align-items: flex-start;
+  }
+
+  .status-badge {
+    flex-shrink: 0;
+  }
+
+  .login-shell {
+    padding: 12px;
+  }
+
+  .login-card {
+    border-radius: 18px;
+  }
+
+  .login-visual h1 {
+    font-size: 2rem;
   }
 }
