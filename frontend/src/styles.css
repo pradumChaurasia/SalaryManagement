@@ -68,8 +68,9 @@ button {
 }
 
 .app-shell {
-  min-height: 100vh;
+  height: 100vh;
   padding: 24px;
+  overflow: hidden;
 }
 
 .dashboard-shell {
@@ -77,12 +78,13 @@ button {
   gap: 24px;
   max-width: 1500px;
   margin: 0 auto;
-  min-height: calc(100vh - 48px);
+  height: calc(100vh - 48px);
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 28px;
   box-shadow: var(--shadow);
   backdrop-filter: blur(10px);
+  overflow: hidden;
 }
 
 .sidebar {
@@ -91,6 +93,7 @@ button {
   border-right: 1px solid var(--border);
   background: var(--surface-elevated);
   border-radius: 28px 0 0 28px;
+  height: 100%;
 }
 
 .brand-wrap {
@@ -171,6 +174,8 @@ button {
   flex: 1;
   padding: 26px 28px 28px;
   overflow: hidden;
+  height: 100%;
+  min-height: 0;
 }
 
 .topbar {
@@ -228,6 +233,7 @@ button {
   grid-template-columns: repeat(4, minmax(160px, 1fr));
   gap: 16px;
   margin-bottom: 22px;
+  flex-shrink: 0;
 }
 
 .stat-card {
@@ -260,6 +266,10 @@ button {
   border: 1px solid var(--border);
   border-radius: 22px;
   padding: 20px;
+  height: calc(100% - 190px);
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .panel-header {
@@ -373,7 +383,8 @@ button {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 14px;
-  max-height: calc(100vh - 360px);
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   padding-right: 8px;
 }
@@ -456,7 +467,8 @@ button {
   top: 24px;
   right: 24px;
   width: min(620px, calc(100vw - 32px));
-  height: calc(100vh - 48px);
+  height: min(92vh, calc(100vh - 48px));
+  max-height: calc(100vh - 48px);
   background: var(--surface-elevated);
   border: 1px solid var(--border);
   border-radius: 24px;
@@ -510,6 +522,7 @@ button {
   grid-template-columns: 1.2fr 1fr;
   gap: 18px;
   margin-top: 18px;
+  min-height: 0;
 }
 
 .mini-panel {
