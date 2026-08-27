@@ -1,15 +1,15 @@
-FROM node:18
+FROM node:20-alpine
 
 WORKDIR /usr/src/app
 
 COPY package*.json ./
-RUN npm install --production
+RUN npm install
 
 COPY . .
+RUN npx prisma generate
 
-# Generate Prisma client if possible
-RUN npx prisma generate || true
+ENV NODE_ENV=production
 
 EXPOSE 3000
 
-CMD ["node", "src/index.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy && node src/index.js"]

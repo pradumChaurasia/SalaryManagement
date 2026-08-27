@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: acme-salary-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: PORT
+        value: 3000
+      - key: AUTH_ENABLED
+        value: true
+      - key: AUTH_USER
+        value: admin
+      - key: AUTH_PASS
+        sync: false
+      - key: AUTH_SECRET
+        sync: false
+
+  - type: static
+    name: acme-salary-ui
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        sync: false

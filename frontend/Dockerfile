@@ -1,4 +1,4 @@
-FROM node:18
+FROM node:20-alpine
 
 WORKDIR /app
 
@@ -8,7 +8,6 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-# lightweight static server for built assets
 RUN npm install -g serve
 
 EXPOSE 5173
