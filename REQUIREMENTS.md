@@ -1,72 +1,63 @@
 # ACME Salary Management — Requirements
 
-**Product:** Web software for the HR manager to maintain employee compensation and answer “how does the org pay people?”  
-**Scale:** ~10,000 employees, multiple countries  
-**Persona:** HR Manager (sole operator for this version)  
-**Status:** MVP / assessment scope
-
 ## Goal
 
-Replace Excel as the system of record for **current employee compensation**. HR should search and update salaries, keep a simple raise history, and see org-level pay breakdowns (country, department, job title, currency) without exporting to spreadsheets.
+Replace Excel as the system of record for current employee compensation. The product should let an HR manager search employees, review current pay and salary history, update compensation records, and understand pay patterns across the organization without exporting spreadsheets.
 
-This is **compensation administration and insight**, not payroll.
+This is a compensation administration and analysis product, not payroll.
 
-## In scope
+## Scope and core features
 
-1. **Employee compensation directory**
-   - Search and filter: name, employee code, country, department, job title, employment status
-   - Paginated list (never load all 10,000 rows in the browser)
-   - Employee detail: identity, current pay, salary history
-   - Create employee with an initial salary
-   - Update identity fields
-   - Adjust salary (closes the previous current record, inserts a new one)
-   - Soft-deactivate (`inactive`); no hard delete of people who were paid
+### 1. Employee directory
+- Search and filter by employee name, code, country, department, job title, and status
+- Server-side pagination so the UI does not load all 10,000 employees at once
+- Employee detail view showing identity, current pay, and historical salary changes
+- Create a new employee with an initial salary
+- Update identity and employment status
+- Adjust salary by closing the previous current record and inserting a new one
+- Soft-deactivate employees instead of hard deleting them
 
-2. **Pay insights**
-   - Headcount, total / average / median annual base, in a **reporting currency (USD)**
-   - Breakdowns by country, department, job title, currency
-   - Conversion via **seeded FX rates** (not live market APIs)
-   - Active employees only in payroll totals
+### 2. Compensation management
+- Store annual base salary as a decimal value in MySQL
+- Maintain historical salary records with effective dates
+- Enforce the business rule that only one current salary record may exist per employee
+- Support salary changes without losing the audit trail
 
-3. **Seed**
-   - Deterministic script: 10,000 employees across several countries, departments, and currencies
+### 3. Pay insights
+- Headcount, total, average, and median annual base salary
+- Reporting in USD as the standard currency for this MVP
+- Breakdown by country, department, job title, and currency
+- Use seeded FX rates rather than live market APIs
+- Exclude inactive employees from payroll totals while still keeping them visible in the directory
 
-4. **Access**
-   - Single HR login so the demo is not an open database. Not a full IAM product.
+### 4. Data and quality
+- Seed a database with ~10,000 employees across multiple countries, departments, and titles
+- Run tests for money rules, unique employee codes, effective dates, and aggregate calculations
+- Keep the app fast and reliable on a single MySQL-backed service model
 
-5. **Quality**
-   - Unit/API tests for money rules, unique employee codes, salary effective dates, and insight aggregates
+## What we are deliberately leaving out
 
-## Out of scope (deliberate)
+The following are intentionally out of scope for this MVP because they expand the product into a different class of system:
 
-| Left out | Reason |
-|---|---|
-| Payroll, tax, payslips, statutory deductions | Different product; compliance-heavy; not needed to manage salary *data* |
-| Full bonus / equity / benefits models | Scope explosion; MVP stores **annual base** only |
-| Employee or manager self-service | Persona is HR only |
-| Multi-tenant, SSO, RBAC, approval workflows | One org, one role |
-| Live FX APIs | Flaky, non-reproducible numbers; HR needs stable reports |
-| Excel import/export | Seed + UI CRUD prove the model; import is a follow-up |
-| Full audit log | Valuable in production HR; not required to prove the product |
-| Real-time collaboration | Single user |
-| MongoDB | Compensation is relational (invariants, history, `GROUP BY`); MySQL fits |
+- Payroll, tax, payslips, and statutory deductions
+- Bonus, equity, benefits, and other compensation components beyond annual base salary
+- Employee self-service, manager access, and approval workflows
+- Multi-tenant or enterprise IAM systems
+- Live FX APIs and real-time market data
+- Excel import/export tooling
+- Full audit logs and compliance controls
+- Distributed systems, microservices, and large-scale data platform requirements
 
-**Rule:** a feature ships only if it mutates compensation data or answers a pay question.
+## Reasoning
+
+This assessment is designed to validate a focused HR compensation tool: manage salary data, preserve history, and summarize pay patterns. The product should solve the real problem with a clear data model and small number of user roles, rather than broadening into payroll operations or enterprise identity infrastructure.
+
+The deliberate exclusions keep the project realistic, testable, and buildable within the assessment scope while preserving the core business value: reliable employee compensation records and actionable pay insight across a large workforce.
 
 ## Success criteria
 
-- HR can find any employee via search + filters with server-side pagination
-- Insights over all ~10k active employees run as SQL aggregates, not in the browser
-- Seed is idempotent and deterministic
-- Tests cover core domain rules and are fast/deterministic
-- Incremental git history; this document committed before application code
-
-## Non-goals for this assessment
-
-Deploy is listed under **Readiness** in the brief (“fully functional deployed software” + video demo). Implementation order treats deploy as a **last** phase after a working local app. Local Docker (MySQL + API + UI) is the primary development target.
-
-## Open decisions (frozen for MVP)
-
-- Reporting currency: **USD**
-- Inactive employees: **excluded** from insight totals; still visible in the directory
-- Amounts: **annual base salary**, `DECIMAL` in MySQL, never binary floating point for persistence
+- HR can find and update employees quickly using search, filters, and paginated results
+- Salary history and current pay are preserved correctly
+- Insights over ~10,000 active employees are computed in SQL, not in the browser
+- Core business rules are enforced through tests and validation
+- The product works locally and is ready for deployment as a final readiness phase
