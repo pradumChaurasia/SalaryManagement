@@ -32,7 +32,7 @@ describe('Compensation API', () => {
       employeeId: employee.id,
       annualBase: 50000.00,
       currency: 'USD',
-      effectiveFrom: new Date().toISOString(),
+      effectiveFrom: '2026-08-27',
     };
 
     const res = await request(app).post('/compensations').send(payload).expect(201);

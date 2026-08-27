@@ -50,11 +50,20 @@ export default function EmployeeDetail({ employee, apiBase = '', token = '', onC
     e.preventDefault()
     setError(null)
 
+    const annualBase = Number(form.annualBase)
+    const hasValidAnnualBase = Number.isFinite(annualBase) && annualBase > 0
+    const hasValidDate = !!form.effectiveFrom && !Number.isNaN(new Date(`${form.effectiveFrom}T12:00:00Z`).getTime())
+
+    if (!hasValidAnnualBase || !hasValidDate) {
+      setError('Please enter a valid annual base and effective date before saving.')
+      return
+    }
+
     const payload = {
       employeeId: localEmployee.id,
-      annualBase: Number(form.annualBase),
+      annualBase,
       currency: form.currency,
-      effectiveFrom: form.effectiveFrom,
+      effectiveFrom: new Date(`${form.effectiveFrom}T12:00:00Z`).toISOString(),
     }
 
     const res = await apiFetch(`${apiBase}/compensations`, { method: 'POST', body: payload, token })

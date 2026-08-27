@@ -21,7 +21,12 @@ function router(prisma) {
   r.post('/', async (req, res) => {
     const data = req.body;
     try {
-      const created = await prisma.compensationRecord.create({ data });
+      const normalized = { ...data };
+      if (normalized.effectiveFrom && typeof normalized.effectiveFrom === 'string' && normalized.effectiveFrom.length === 10) {
+        normalized.effectiveFrom = new Date(`${normalized.effectiveFrom}T12:00:00Z`).toISOString();
+      }
+
+      const created = await prisma.compensationRecord.create({ data: normalized });
       res.status(201).json(created);
     } catch (err) {
       res.status(400).json({ error: err.message });
