@@ -34,6 +34,13 @@ describe('Employee API', () => {
     expect(Array.isArray(res.body.items)).toBe(true);
   });
 
+  test('GET /employees?q= -> search works without Prisma mode filter', async () => {
+    const res = await request(app).get(`/employees?q=${encodeURIComponent('Test')}`).expect(200);
+    expect(res.body).toHaveProperty('items');
+    expect(Array.isArray(res.body.items)).toBe(true);
+    expect(res.body.total).toBeGreaterThanOrEqual(0);
+  });
+
   test('GET /employees/:id -> fetch', async () => {
     const res = await request(app).get(`/employees/${created.id}`).expect(200);
     expect(res.body.id).toBe(created.id);

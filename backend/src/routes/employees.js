@@ -13,8 +13,8 @@ function router(prisma) {
     const where = {};
     if (q) {
       where.OR = [
-        { fullName: { contains: q, mode: 'insensitive' } },
-        { jobTitle: { contains: q, mode: 'insensitive' } },
+        { fullName: { contains: q } },
+        { jobTitle: { contains: q } },
       ];
     }
 
